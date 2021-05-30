@@ -5,7 +5,6 @@ import club.ampthedev.mcgradle.base.utils.*
 import club.ampthedev.mcgradle.base.utils.mcpconfig.MCPConfigUtils
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -35,49 +34,11 @@ open class TaskMergeJars : BaseTask(SPLIT_SERVER, DOWNLOAD_CLIENT) {
     @TaskAction
     fun merge() {
         if (project.newConfig) {
-            val temp = File(temporaryDir, "temp.jar")
             MCPConfigUtils.runTask(
-                project, "merge", temp, File(temporaryDir, "merge.log"),
+                project, "merge", mergedJar, File(temporaryDir, "merge.log"),
                 "client" to clientJar.absolutePath,
                 "server" to serverJar.absolutePath
             )
-            ZipFile(clientJar).use { cJar ->
-                ZipFile(serverJar).use { sJar ->
-                    ZipFile(temp).use { mJar ->
-                        ZipOutputStream(mergedJar.outputStream()).use { out ->
-                            val resources = hashSetOf<String>()
-                            val addResources: ZipFile.() -> Unit = {
-                                entries().iterator().forEach { entry ->
-                                    val name = entry.name
-                                    if (name == "META-INF/MANIFEST.MF") return@forEach
-                                    if (entry.isDirectory) return@forEach
-                                    if (!name.endsWith(".class") || name.startsWith(".")) {
-                                        if (!resources.contains(name)) {
-                                            val entry1 = ZipEntry(name)
-                                            out.putNextEntry(entry1)
-                                            out.write(getInputStream(entry).use { it.readBytes() })
-                                            resources.add(name)
-                                        }
-                                    }
-                                }
-                            }
-                            cJar.addResources()
-                            sJar.addResources()
-                            mJar.entries().iterator().forEach { entry ->
-                                val name = entry.name
-                                if (name == "META-INF/MANIFEST.MF") return@forEach
-                                if (entry.isDirectory) return@forEach
-                                if (!resources.contains(name)) {
-                                    val entry1 = ZipEntry(name)
-                                    out.putNextEntry(entry1)
-                                    mJar.getInputStream(entry).use { it.copyTo(out) }
-                                    resources.add(name)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         } else {
             ZipFile(clientJar).use { cJar ->
                 ZipFile(serverJar).use { sJar ->
