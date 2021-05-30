@@ -1,18 +1,16 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.61'
+    id 'org.jetbrains.kotlin.jvm' version '1.5.10'
     id 'maven-publish'
     id "com.github.johnrengelman.shadow" version "5.2.0"
 }
 
 group 'club.ampthedev.mcgradle'
-version '2.0.10'
+version '2.0.11'
 
 repositories {
     mavenCentral()
-    maven {
-        url 'https://files.minecraftforge.net/maven'
-    }
+    maven {url 'https://maven.minecraftforge.net/'}
 }
 
 sourceSets {
@@ -37,6 +35,14 @@ configurations {
     forgeflower
     mcinjector
     compileOnly.extendsFrom mcinjector
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group == 'org.eclipse.jdt' && details.requested.name == 'org.eclipse.jdt.core') {
+            details.useVersion '3.10.0'
+        }
+    }
 }
 
 dependencies {

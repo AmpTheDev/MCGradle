@@ -99,7 +99,7 @@ class MCGradlePatch : BasePlugin<PatchExtension>() {
         val javaPlugin = project.convention.getPlugin(JavaPluginConvention::class.java)
         val sourceSets = javaPlugin.sourceSets
         val main = extension.sourceSet ?: sourceSets.getByName("main")
-        project.configurations.getByName(main.compileConfigurationName)
+        project.configurations.getByName(main.compileClasspathConfigurationName)
             .extendsFrom(project.configurations.getByName(CONFIGURATION_MC_DEPS))
     }
 }
