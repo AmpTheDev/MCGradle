@@ -22,16 +22,16 @@ open class TaskDownloadNatives : BaseTask() {
         prepareDirectory(output)
         for (element in project.getVersionJson().getAsJsonArray("libraries")) {
             val obj = element.asJsonObject
-            if (shouldIncludeDependency(obj)) {
-                val data = getDependencyData(obj)
-                if (data.third.second) {
-                    val file = File(project.mcgFile(CACHE_DIR), "dependencies/${data.first.replace(':', '_')}")
-                    if (file.exists()) {
-                        project.zipTree(file).visit {
-                            if (it.isDirectory) return@visit
-                            val outputFile = File(output, it.path)
-                            prepareDirectory(outputFile.parentFile)
-                            it.copyTo(outputFile)
+            if (obj.has("natives") && shouldIncludeDependency(obj)) {
+                for (dep in deps.allDependencies) {
+                    if (dependencyEqualsMcDep(obj, dep)) {
+                        for (f in deps.files(dep)) {
+                            project.zipTree(f).visit {
+                                if (it.isDirectory) return@visit
+                                val outputFile = File(output, it.path)
+                                prepareDirectory(outputFile.parentFile)
+                                it.copyTo(outputFile)
+                            }
                         }
                     }
                 }

@@ -33,7 +33,7 @@ fun shouldIncludeDependency(obj: JsonObject): Boolean {
     return allowed
 }
 
-fun getDependencyData(obj: JsonObject): Triple<String, String, Pair<String?, Boolean>> {
+fun getDependencyUrl(obj: JsonObject): Triple<String, String, String?> {
     val classifier = obj.getAsJsonObject("natives")?.get(OS.current().name.toLowerCase())?.asString
     val isNative = classifier != null && obj["downloads"]?.asJsonObject?.getAsJsonObject("classifiers")?.has(classifier) == true
     val downloads = obj.getAsJsonObject("downloads")
@@ -57,7 +57,7 @@ fun getDependencyData(obj: JsonObject): Triple<String, String, Pair<String?, Boo
             url = "https://libraries.minecraft.net/${parts[0].replace('.', '/')}/${parts[1]}/${parts[2]}"
         }
     }
-    return url?.let { u -> name?.let { Triple(it, u, Pair(sha1, isNative)) } } ?: error("Invalid dependency in version JSON")
+    return url?.let { u -> name?.let { Triple(it, u, sha1) } } ?: error("Invalid dependency in version JSON")
 }
 /*
 fun getDependencyString(obj: JsonObject): String {
