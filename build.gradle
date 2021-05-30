@@ -37,14 +37,6 @@ configurations {
     compileOnly.extendsFrom mcinjector
 }
 
-configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        if (details.requested.group == 'org.eclipse.jdt' && details.requested.name == 'org.eclipse.jdt.core') {
-            details.useVersion '3.10.0'
-        }
-    }
-}
-
 dependencies {
     implementation gradleApi()
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
@@ -95,6 +87,12 @@ dependencies {
     userImplementation sourceSets.main.compileClasspath
     newdecompImplementation sourceSets.main.output
     newdecompImplementation sourceSets.main.compileClasspath
+
+    constraints {
+        implementation('org.eclipse.jdt:org.eclipse.jdt.core:3.12.3') {
+            because 'Srg2Source depends on a snapshot version which the forge maven has stopped serving'
+        }
+    }
 }
 
 shadowJar {
