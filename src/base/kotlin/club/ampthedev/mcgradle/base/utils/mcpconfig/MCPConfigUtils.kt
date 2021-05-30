@@ -82,7 +82,7 @@ object MCPConfigUtils {
             val repo = if (functionObj.has("repo")) {
                 functionObj["repo"].asString
             } else {
-                "https://files.minecraftforge.net/maven"
+                "https://maven.minecraftforge.net/"
             }.removeSuffix("/").replace("http://", "https://")
             try {
                 URL("$repo/$url").openConnection().apply {

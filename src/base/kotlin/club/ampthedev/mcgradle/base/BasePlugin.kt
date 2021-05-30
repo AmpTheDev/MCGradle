@@ -31,7 +31,7 @@ abstract class BasePlugin<T : BaseExtension> : Plugin<Project> {
 
     open fun setup(project: Project) {
         project.repositories.mavenCentral()
-        project.repositories.maven { it.setUrl("https://files.minecraftforge.net/maven") }
+        project.repositories.maven { it.setUrl("https://maven.minecraftforge.net/") }
         project.repositories.maven { it.setUrl("https://libraries.minecraft.net") }
 
         project.addReplacements(mapOf(

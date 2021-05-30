@@ -151,7 +151,7 @@ class MCGradleUser : BasePlugin<UserExtension>() {
     override fun setup(project: Project) {
         project.tasks.getByName("jar").finalizedBy(REOBF_JAR)
         project.repositories.mavenCentral()
-        project.repositories.maven { it.setUrl("https://files.minecraftforge.net/maven") }
+        project.repositories.maven { it.setUrl("https://maven.minecraftforge.net/") }
         project.repositories.maven { it.setUrl("https://libraries.minecraft.net") }
         var modJar: File? = null
         val conf = project.configurations.getByName(CONFIGURATION_MOD)
