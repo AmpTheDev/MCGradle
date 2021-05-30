@@ -27,15 +27,12 @@ abstract class BasicDownloadTask(type: TaskType = TaskType.OTHER, vararg deps: S
     }
 
     companion object {
-        fun download(url: String, dest: File, sha1: String? = null, tries: Int = 0, print: Boolean = false) {
+        fun download(url: String, dest: File, sha1: String? = null, tries: Int = 0) {
             if (sha1 != null && dest.exists()) {
                 if (sha1.equals(dest.sha1(), ignoreCase = true)) return
             }
             if (tries > 10) {
                 throw GradleException("Failed to download $url")
-            }
-            if (print) {
-                println("Downloading $url")
             }
             val conn = URL(url).openConnection()
             conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0")

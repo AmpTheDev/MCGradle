@@ -26,40 +26,12 @@ fun shouldIncludeDependency(obj: JsonObject): Boolean {
             disallowEncountered = true
         }
     }
-    val classifier = obj.getAsJsonObject("natives")?.get(OS.current().name.toLowerCase())?.asString
-    if (classifier != null && obj["downloads"]?.asJsonObject?.getAsJsonObject("classifiers")?.has(classifier) != true) {
+    if (obj.has("natives") && obj["downloads"]?.asJsonObject?.getAsJsonObject("classifiers")?.has("natives-${OS.current().name.toLowerCase()}") != true) {
         return false // override because mojang is dumb and hasn't included rules for this
     }
     return allowed
 }
 
-fun getDependencyUrl(obj: JsonObject): Triple<String, String, String?> {
-    val classifier = obj.getAsJsonObject("natives")?.get(OS.current().name.toLowerCase())?.asString
-    val isNative = classifier != null && obj["downloads"]?.asJsonObject?.getAsJsonObject("classifiers")?.has(classifier) == true
-    val downloads = obj.getAsJsonObject("downloads")
-    var sha1: String? = null
-    var url: String? = null
-    var name = obj["name"]?.asString
-    if (isNative) {
-        name += ":$classifier"
-    }
-    if (downloads != null) {
-        val downloadsObj = if (isNative) {
-            obj["downloads"].asJsonObject.getAsJsonObject("classifiers").getAsJsonObject(classifier)
-        } else {
-            obj["downloads"].asJsonObject.getAsJsonObject("artifact")
-        }
-        url = downloadsObj?.get("url")?.asString
-        sha1 = downloadsObj?.get("sha1")?.asString
-    } else {
-        name?.let {
-            val parts = it.split(":")
-            url = "https://libraries.minecraft.net/${parts[0].replace('.', '/')}/${parts[1]}/${parts[2]}"
-        }
-    }
-    return url?.let { u -> name?.let { Triple(it, u, sha1) } } ?: error("Invalid dependency in version JSON")
-}
-/*
 fun getDependencyString(obj: JsonObject): String {
     val isNative = obj.has("natives")
     var it = obj["name"].asString
@@ -68,7 +40,7 @@ fun getDependencyString(obj: JsonObject): String {
         it += ":" + nativesObj.get(OS.current().name.toLowerCase()).asString.replace("\${arch}", if (System.getProperty("os.arch").equals("x86", ignoreCase = true)) "32" else "64")
     }
     return it
-}*/
+}
 
 fun dependencyEqualsMcDep(obj: JsonObject, dep: Dependency): Boolean {
     val name = obj["name"].asString
