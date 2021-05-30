@@ -26,9 +26,6 @@ fun shouldIncludeDependency(obj: JsonObject): Boolean {
             disallowEncountered = true
         }
     }
-    if (obj.has("natives") && obj["downloads"]?.asJsonObject?.getAsJsonObject("classifiers")?.has("natives-${OS.current().name.toLowerCase()}") != true) {
-        return false // override because mojang is dumb and hasn't included rules for this
-    }
     return allowed
 }
 

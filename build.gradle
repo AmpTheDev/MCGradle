@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'club.ampthedev.mcgradle'
-version '2.0.11'
+version '2.0.10'
 
 repositories {
     mavenCentral()
