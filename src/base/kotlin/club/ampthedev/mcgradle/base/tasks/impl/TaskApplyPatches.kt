@@ -142,7 +142,7 @@ open class TaskApplyPatches : ZipEditTask() {
     private fun String.stripComments(): String {
         var state = CommentState.CODE
         var i = 0
-        var text = this
+        var text: String
         StringWriter(length).use {
             while (i < length) {
                 if (state == CommentState.CODE) {

@@ -29,14 +29,13 @@ open class TaskCreateRunConfig : BaseTask() {
     val args = arrayListOf<String>()
 
     @Input
-    var workingDirectory = project.projectDir.absoluteFile
+    var workingDirectory: File = project.projectDir.absoluteFile
 
     @Input
     val beforeRunTasks = arrayListOf<String>()
 
     @TaskAction
     fun generate() {
-        val module = project.projectDir.canonicalPath
         var root = project.projectDir.canonicalFile
         var file: File? = null
         while (file == null && root != project.rootDir.canonicalFile.parentFile) {
@@ -126,7 +125,7 @@ open class TaskCreateRunConfig : BaseTask() {
         transformer.setOutputProperty(METHOD, "xml")
         transformer.setOutputProperty(INDENT, "yes")
         transformer.setOutputProperty(ENCODING, "UTF-8")
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4")
+        transformer.setOutputProperty("{https://xml.apache.org/xslt}indent-amount", "4")
 
         val source = DOMSource(doc)
         val result = StreamResult(file)
