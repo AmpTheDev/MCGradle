@@ -180,7 +180,7 @@ class MCGradleUser : BasePlugin<UserExtension>() {
             project.addReplacement(MOD_HASH, modJar.hash("SHA-256"))
             for (f in conf) {
                 if (f != modJar) {
-                    project.dependencies.add("compile", project.files(f))
+                    project.dependencies.add("implementation", project.files(f))
                 }
             }
         }
@@ -194,19 +194,19 @@ class MCGradleUser : BasePlugin<UserExtension>() {
         project.repositories.maven { it.url = project.mcgFile(REPO).toURI() }
 
         project.dependencies
-            .add("compile", project.files(castTo<TaskGenerateStartLib>(project.tasks.getByName(GEN_START)).library))
+            .add("implementation", project.files(castTo<TaskGenerateStartLib>(project.tasks.getByName(GEN_START)).library))
         val recompFile = project.mcgFile(DECOMP_BIN)
         val tasks = project.gradle.startParameter.taskNames
         when {
             recompFile.exists() -> {
-                project.dependencies.add("compile", MCSRC_DEP)
+                project.dependencies.add("implementation", MCSRC_DEP)
             }
             project.mcgFile(DEOBF_MCP).exists() -> {
-                project.dependencies.add("compile", MCBIN_DEP)
+                project.dependencies.add("implementation", MCBIN_DEP)
             }
             !(tasks.contains(SETUP_CI) || tasks.contains(SETUP_DEV) || tasks.contains(SETUP_DECOMP)) -> println("Please run a setup task ASAP.")
         }
-        project.configurations.getByName("compile").extendsFrom(project.configurations.getByName(CONFIGURATION_MC_DEPS))
+        project.configurations.getByName("implementation").extendsFrom(project.configurations.getByName(CONFIGURATION_MC_DEPS))
 
         val setupCI = project.tasks.create(SETUP_DEV)
         setupCI.group = TaskType.MAIN.groupName
